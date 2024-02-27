@@ -78,6 +78,7 @@ fabric.properties
 
 .pio
 
+.vscode/
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
@@ -90,3 +91,5 @@ fabric.properties
 
 # Built Visual Studio Code Extensions
 *.vsix
+
+ryagotchi.code-workspace
