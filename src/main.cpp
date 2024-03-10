@@ -3,11 +3,13 @@
 //
 
 #include "main.h"
+#include "images/Sprite-0002.h"
 #include <Arduino.h>
 #include <SPI.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_ILI9341.h>
 #include <XPT2046_Touchscreen.h>
+#include <LittleFS.h>
 
 // Use hardware SPI (fast, but fixed SPI pins)
 #define TFT_CS D2 // Chip select
@@ -77,6 +79,39 @@ void drawButtons(int screenWidth, int screenHeight) {
     }
 
 }
+
+void drawRGB565Image(const uint16_t* image, int16_t x, int16_t y, uint16_t width, uint16_t height) {
+    tft.startWrite(); // Optional, for libraries that support batch operations
+    for (uint16_t j = 0; j < height; j++) {
+        for (uint16_t i = 0; i < width; i++) {
+            uint16_t color = image[j * width + i];
+            tft.writePixel(x + i, y + j, color);
+        }
+    }
+    tft.endWrite(); // Optional, for libraries that support batch operations
+}
+
+void drawRGB565ImageFromFile(const char* imagePath, int x, int y, int width, int height) {
+    File imageFile = LittleFS.open(imagePath, "r");
+    if (!imageFile) {
+        Serial.println("Failed to open image file");
+        return;
+    }
+
+    uint16_t buffer[width]; // Buffer for one row of image data
+    tft.setAddrWindow(x, y, width, height);
+
+    for (int j = 0; j < height; j++) {
+        // Read one row of image data into buffer
+        if(imageFile.read((uint8_t*)buffer, width * 2) == width * 2) {
+            // Push the row of pixel data to the display
+            // tft.pushColors(buffer, width, true);
+        }
+    }
+
+    imageFile.close();
+}
+
 void loop(){
     int screenWidth = tft.width();
     int screenHeight = tft.height();
@@ -95,6 +130,7 @@ void loop(){
         tft.print(" Y = ");
         tft.println(p.y);
     } 
+    //drawRGB565Image(Sprite0002, 0, 0, 320, 175);
     drawButtons(screenWidth, screenHeight);
     delay(200);
 }
