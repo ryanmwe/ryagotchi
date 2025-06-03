@@ -10,6 +10,7 @@
 #include <Adafruit_ILI9341.h>
 #include <XPT2046_Touchscreen.h>
 #include <LittleFS.h>
+#include <vector>
 
 // Use hardware SPI (fast, but fixed SPI pins)
 #define TFT_CS D2 // Chip select
@@ -98,7 +99,7 @@ void drawRGB565ImageFromFile(const char* imagePath, int x, int y, int width, int
         return;
     }
 
-    uint16_t buffer[width]; // Buffer for one row of image data
+    std::vector<uint16_t> buffer(width); // Buffer for one row of image data
     tft.setAddrWindow(x, y, width, height);
 
     for (int j = 0; j < height; j++) {
